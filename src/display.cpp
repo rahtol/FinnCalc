@@ -16,15 +16,24 @@ void Cdisplay::setCalculation(const char *calculation) {
   u8x8.print(calculation);
 }
 void Cdisplay::setSolution(float solution) {
-    int digits = (int) ceilf(log10(abs(solution)));
+    int total_places = 8; // eight characters of size 2x2 fit on the line
+    int digits_before_decimal_point = max(1, ((int) floorf(log10(abs(solution))) + 1)); // always at least one place before decimal point
+    int decimal_places = total_places - 2 - digits_before_decimal_point; // the two account for a sign and the decimal separator 
+    // TODO: NaN if decima places < 0
 
     char buf[32], buf2[32];
-    sprintf(buf, "%8.*f", 6-digits, solution);
+    sprintf(buf, "%8.*f", decimal_places, solution);
 
-    int idx;
-    for (idx=strlen(buf);  idx > 1 && ((buf[idx-1] == '0')||(buf[idx-1] == '.')); idx--);
-    buf[idx] = 0;
-    sprintf(buf2, "%8s", buf);
+    if (strchr(buf, '.')) {
+      int idx;
+      for (idx=strlen(buf);  idx > 1 && (buf[idx-1] == '0'); idx--);
+      if (buf[idx-1] == '.') idx--;
+      buf[idx] = 0;
+      sprintf(buf2, "%8s", buf);
+    }
+    else {
+      strcpy(buf2, buf);
+    }
 
     u8x8.draw2x2String(0, 5, buf2);
 }

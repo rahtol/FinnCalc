@@ -2,7 +2,7 @@
 #include "calculator.h"
 #include "stack.h"
 
-const char * const version = "FinnCalc V1.00";
+const char * const version = "FinnCalc V1.01";
 
 Ccalculator::Ccalculator () : operanden(), operatoren() {
     state = idle;
